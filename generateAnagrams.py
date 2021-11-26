@@ -24,21 +24,23 @@ for word in legal_words:
     ii[fingerprint].append(word)
 
 added = set()
+
+# TODO Make this not take as long
+# The problem is that work is being repeated with subseqs
+# that aren't real words.
+print('This may take a few minutes')
 for word in legal_words:
     fingerprint = ''.join(sorted(word))
 
     to_search = [fingerprint]
     while to_search:
         curr = to_search.pop()
-        if len(curr) < 3:
+        if len(curr) < 4:
             continue
         subseqs = [''.join(list(x)) for x in combinations(curr, len(curr) - 1)]
         for subseq in subseqs:
-
             if subseq in ii and subseq not in subgrams[fingerprint]:
                 subgrams[fingerprint].append(subseq)
-            if subseq in added:
-                continue
             else:
                 to_search.append(subseq)
         added.add(curr)
@@ -50,3 +52,4 @@ data['subgrams'] = subgrams
 with open(output_location, 'w+') as output_file:
     output_file.write('export const dict = ');
     json.dump(data, output_file)
+
